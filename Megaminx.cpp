@@ -344,6 +344,52 @@ void Megaminx::scramble()
 	//scramble from view outside of GUI
 	scramble_face0_side1(rand3);
 }
+
+void Megaminx::distance_to_solved(int depth)
+{
+	int misplaced_stickers = 0;
+	this->g = depth;
+		
+	for(int i =0; i < SIDE_1_SIZE; i++)//for each face in side 1
+	{
+		Face current_face = (faces_array1[i]);
+		Block center_sticker((current_face.center).row[1]); //the main center sticker of the face
+
+		for(int j =0; j < ROW_SIZE; j++) //for top row of face
+		{
+			if((current_face.top).row[j] != center_sticker)
+				misplaced_stickers++;
+		}
+
+		for(int j =0; j < ROW_SIZE; j++) //for top right row of face
+		{
+			if((current_face.top_right).row[j] != center_sticker)
+				misplaced_stickers++;
+		}
+	
+		for(int j =0; j < ROW_SIZE; j++) //for bottom right row of face
+		{
+			if((current_face.bot_right).row[j] != center_sticker)
+				misplaced_stickers++;
+		}
+
+		for(int j =0; j < ROW_SIZE; j++) //for bottom left row of face
+		{
+			if((current_face.bot_left).row[j] != center_sticker)
+				misplaced_stickers++;
+		}	 
+		
+		for(int j =0; j < ROW_SIZE; j++) //for top left row of face
+		{
+			if((current_face.top_left).row[j] != center_sticker)
+				misplaced_stickers++;
+		}     
+	}
+	
+	//assign h to be the ceiling of the number of misplaced stickers divided by 15
+	this->h = (misplaced_stickers / 15) + (misplaced_stickers % 15 != 0);
+}
+
 bool Megaminx::operator==(const Megaminx &other) const
 {
 		for(int i =0 ; i <SIDE_1_SIZE; i++)

@@ -16,15 +16,12 @@ int main()
 //	test.print(); //prints Megaminx
 //	test.scramble(); //randomizes Megaminx	
 //	std::cout << std::endl << std::endl;
-//	test.print();
-	if (test == blank)
-		std::cout << "All is right in the world" << std::endl;
-	else 
-		std::cout << "You need to do a lil work" << std::endl;
-
-
-//	test.print();
 //	blank.print();
+	test.print();
+	test.scramble();
+	test.print();
+	test.distance_to_solved(0);
+	std::cout << "Distance to solved: " << test.f << std::endl;
 
 	return 0;
 }

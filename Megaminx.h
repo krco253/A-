@@ -20,8 +20,12 @@ class Megaminx
 		void scramble_face0_side1(int random);
 		void print();
 		bool operator==(const Megaminx &other) const;
+		void distance_to_solved(int depth);
 
-		//void solve();
+		int g; //depth
+		int h; //cost to goal
+		int f; // depth + cost, or g + h		
+		
 		~Megaminx();
 
 		friend void get_rand_ints(int &one, int &two, int &three, int sum);
@@ -29,5 +33,6 @@ class Megaminx
 		void scramble_top(int random);
 	private:
 		Face faces_array1[SIDE_1_SIZE];
-		Face faces_array2[SIDE_2_SIZE];		
+		Face faces_array2[SIDE_2_SIZE];
+		
 };
