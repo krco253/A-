@@ -18,7 +18,7 @@ git clone https://github.com/krco253/megaminx.git
 
 2. Inside of the megaminx folder, compile with gcc
 ```
-g++ -o Megaminx Block.cpp Row.cpp Face.cpp Megaminx.cpp main.cpp
+g++ -std=c++11 -o Megaminx Block.cpp Row.cpp Face.cpp Megaminx.cpp main.cpp
 ```
 3. Run the program:
 ```

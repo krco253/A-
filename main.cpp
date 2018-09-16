@@ -13,15 +13,16 @@ int main()
 {
 	Megaminx test;
 	Megaminx blank;
-//	test.print(); //prints Megaminx
+	test.print(); //prints Megaminx
 //	test.scramble(); //randomizes Megaminx	
-//	std::cout << std::endl << std::endl;
-//	blank.print();
-	test.print();
-	test.scramble();
-	test.print();
-	test.distance_to_solved(0);
-	std::cout << "Distance to solved: " << test.f << std::endl;
+	std::cout << std::endl << std::endl;
+	blank = test.rotate_bot();
+	blank.print();
+//	test.rotate_bot();
+//	test.print();
 
+//	AStar test_solution(test);
+//	test = test_solution.solve();
+//	test.print();
 	return 0;
 }

@@ -6,6 +6,8 @@
 -----------------------------------*/
 #include "Megaminx.h"
 
+//TODO: make sure < works and that f,g,h update
+
 Megaminx::Megaminx()
 {
 	Block temp_q1[TOP_CAP];
@@ -42,7 +44,10 @@ Megaminx::Megaminx()
 		faces_array1[i] = temp_face1;
 		faces_array2[i] = temp_face2;	
 	}		
-			  	
+	
+	g = 0;
+	h = 0;
+	f = 0;		  	
 }
 
 Megaminx::Megaminx(const Megaminx &copy)
@@ -52,7 +57,10 @@ Megaminx::Megaminx(const Megaminx &copy)
 		this->faces_array1[i] = copy.faces_array1[i];
 		this->faces_array2[i] = copy.faces_array2[i];
 	}
-
+	
+	this->g = copy.g;
+	this->h = copy.h;
+	this->f = copy.f;
 }
 
 void Megaminx::print()
@@ -261,17 +269,16 @@ void Megaminx::print()
 	std::cout << std::endl;
 }	
 
-void get_rand_ints(int &one, int &two, int &three, int sum)
+void get_rand_ints(int &one, int &two, int sum)
 {
 	std::random_device rand_dev;
 	std::uniform_int_distribution<int> range(0,sum/2);
 	
 	one = range(rand_dev);
-	two = range(rand_dev);
-	three = sum - (one + two); 
+	two = sum - (one + two); 
 }
 
-void Megaminx::scramble_top_side1(int random)
+void Megaminx::scramble_top(int random)
 {
 	//scramble tops from "side 1" view (faces 4 and 5 from side 2 hidden)
 	// "rotate" clockwise "random" amount of times
@@ -288,38 +295,22 @@ void Megaminx::scramble_top_side1(int random)
 	}
 }
 
-void Megaminx::scramble_bottom_side2(int random)
+void Megaminx::scramble_bottom(int random)
 {
-	//scramble bottoms from "side 2" view
+	//scramble bottom (which are "tops" by defintion of Face)
+	// from "side 1" view
 	// "rotate" clockwise "random" amount of times
 	int turns = 0;
 	while (turns < random) 
 	{
 		Row temp = faces_array1[4].top;
-		faces_array1[4].top = faces_array2[3].top;
-		faces_array2[3].top = faces_array2[2].top;
-		faces_array2[2].top = faces_array2[1].top;
-		faces_array2[1].top = faces_array1[5].top;
-		faces_array1[5].top = temp;
-		turns++;	
-	}
-}
-
-void Megaminx::scramble_face0_side1(int random)
-{
-	//scramble tops from "side1" "face 3" view (this particular view not shown in GUI)
-	// "rotate" clockwise "random" amount of times
-	// this is so face 0 will be scrambled
-	int turns = 0;
-	while (turns < random) 
-	{
-		Row temp = faces_array1[5].top;
+		faces_array1[4].top = faces_array1[5].top;
 		faces_array1[5].top = faces_array2[1].top;
-		faces_array2[1].top = faces_array2[4].top;
-		faces_array2[4].top = faces_array1[0].top;
-		faces_array1[0].top = faces_array1[2].top;
-		faces_array1[2].top = temp;
+		faces_array2[1].top = faces_array2[2].top;
+		faces_array2[2].top = faces_array2[3].top;
+		faces_array2[3].top = temp;
 		turns++;	
+
 	}
 }
 
@@ -329,20 +320,20 @@ void Megaminx::scramble()
 	std::cout << "Enter number of desired moves: ";
 	std::cin >> moves;
 	
-	int rand1, rand2, rand3;
-	get_rand_ints(rand1, rand2, rand3, moves);
+	int rand1, rand2;
+	get_rand_ints(rand1, rand2, moves);
 	std::cout << "The tops of side 1 will be scrambled " << rand1 << " times." << std::endl;
 	std::cout << "The tops of side 2 bottom view will be scrambled " << rand2 << " times." << std::endl;
-	std::cout << "The tops from view of side 1 face 3 view will be scrambled " << rand3 << " times." << std::endl;
+	//std::cout << "The tops from view of side 1 face 3 view will be scrambled " << rand3 << " times." << std::endl;
 	
 	//picks a "random" number between 1-10
 	// then turns the top from side 2 view clockwise
 	// that number of times
-	scramble_top_side1(rand1);
+	scramble_top(rand1);
 	// scramble side 2 bottom
-	scramble_bottom_side2(rand2);
-	//scramble from view outside of GUI
-	scramble_face0_side1(rand3);
+	scramble_bottom(rand2);
+	int current_depth = *this.g;
+	this->distance_to_solved(current_depth);	
 }
 
 void Megaminx::distance_to_solved(int depth)
@@ -388,6 +379,67 @@ void Megaminx::distance_to_solved(int depth)
 	
 	//assign h to be the ceiling of the number of misplaced stickers divided by 15
 	this->h = (misplaced_stickers / 15) + (misplaced_stickers % 15 != 0);
+}
+
+/*----------------------------------------
+|               rotate_top()    
+|-----------------------------------------
+| Description: return copy of this Megaminx 
+| top rotated counterclockwise by one
+------------------------------------------*/
+Megaminx Megaminx::rotate_top()
+{
+	Megaminx manip_megaminx; //create a megaminx to apply manipulations to
+	manip_megaminx = *this;	//copy this megaminx into it	
+
+	Row temp = (manip_megaminx.faces_array2[5]).top;
+	(manip_megaminx.faces_array2[5]).top = (manip_megaminx.faces_array2[4]).top;
+	(manip_megaminx.faces_array2[4]).top = (manip_megaminx.faces_array1[3]).top;
+	(manip_megaminx.faces_array1[3]).top = (manip_megaminx.faces_array1[2]).top;
+	(manip_megaminx.faces_array1[2]).top = (manip_megaminx.faces_array1[1]).top;
+	(manip_megaminx.faces_array1[1]).top = temp;
+
+	manip_megaminx.distance_to_solved(*this.g);
+	
+	return manip_megaminx;
+
+}
+
+/*----------------------------------------
+|               rotate_bot()    
+|-----------------------------------------
+| Description: return copy of this Megaminx 
+| bottom rotated counterclockwise by one
+------------------------------------------*/
+Megaminx Megaminx::rotate_bot()
+{
+	Megaminx manip_megaminx; //create a megaminx to apply manipulations to
+	manip_megaminx = *this;	//copy this megaminx into it
+
+	Row temp = (manip_megaminx.faces_array2[5]).top;
+	(manip_megaminx.faces_array1[4]).top = (manip_megaminx.faces_array2[3]).top;
+	(manip_megaminx.faces_array2[3]).top = (manip_megaminx.faces_array2[2]).top;
+	(manip_megaminx.faces_array2[2]).top = (manip_megaminx.faces_array2[1]).top;
+	(manip_megaminx.faces_array2[1]).top = (manip_megaminx.faces_array1[5]).top;
+	(manip_megaminx.faces_array1[5]).top = temp;
+	
+	manip_megaminx.distance_to_solved(*this.g);
+
+	return manip_megaminx;
+}
+
+bool Megaminx::operator<(const Megaminx &other) const
+{
+	if((*this).f < other.f)
+		return true;
+	else return false;
+}
+
+bool Megaminx::operator>(const Megaminx &other) const
+{
+	if((*this).f > other.f)
+		return true;
+	else return false;
 }
 
 bool Megaminx::operator==(const Megaminx &other) const
