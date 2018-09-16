@@ -9,8 +9,6 @@
 
 /* TODO
 1. finish constructor (Include priority queue)
-	1. make member function top_rotation
-	2. make member function bot_rotation
 2. finish solve()
 
 */

@@ -22,7 +22,8 @@ class Megaminx
 		void print();
 		bool operator==(const Megaminx &other) const;
 		void distance_to_solved(int depth);
-		bool operator<(const Megaminx &other) const
+		bool operator<(const Megaminx &other) const;
+		bool operator>(const Megaminx &other) const;
 	
 	
 		int g; //depth

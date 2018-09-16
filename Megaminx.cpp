@@ -6,8 +6,6 @@
 -----------------------------------*/
 #include "Megaminx.h"
 
-//TODO: make sure < works and that f,g,h update
-
 Megaminx::Megaminx()
 {
 	Block temp_q1[TOP_CAP];
@@ -332,7 +330,7 @@ void Megaminx::scramble()
 	scramble_top(rand1);
 	// scramble side 2 bottom
 	scramble_bottom(rand2);
-	int current_depth = *this.g;
+	int current_depth = this->g;
 	this->distance_to_solved(current_depth);	
 }
 
@@ -379,6 +377,7 @@ void Megaminx::distance_to_solved(int depth)
 	
 	//assign h to be the ceiling of the number of misplaced stickers divided by 15
 	this->h = (misplaced_stickers / 15) + (misplaced_stickers % 15 != 0);
+	this->f = h + g;
 }
 
 /*----------------------------------------
@@ -399,7 +398,8 @@ Megaminx Megaminx::rotate_top()
 	(manip_megaminx.faces_array1[2]).top = (manip_megaminx.faces_array1[1]).top;
 	(manip_megaminx.faces_array1[1]).top = temp;
 
-	manip_megaminx.distance_to_solved(*this.g);
+	int depth = (this->g);
+	manip_megaminx.distance_to_solved(depth);
 	
 	return manip_megaminx;
 
@@ -422,22 +422,23 @@ Megaminx Megaminx::rotate_bot()
 	(manip_megaminx.faces_array2[2]).top = (manip_megaminx.faces_array2[1]).top;
 	(manip_megaminx.faces_array2[1]).top = (manip_megaminx.faces_array1[5]).top;
 	(manip_megaminx.faces_array1[5]).top = temp;
-	
-	manip_megaminx.distance_to_solved(*this.g);
+
+	int depth = (this->g);	
+	manip_megaminx.distance_to_solved(depth);
 
 	return manip_megaminx;
 }
 
 bool Megaminx::operator<(const Megaminx &other) const
 {
-	if((*this).f < other.f)
+	if(this->f < other.f)
 		return true;
 	else return false;
 }
 
 bool Megaminx::operator>(const Megaminx &other) const
 {
-	if((*this).f > other.f)
+	if(this->f > other.f)
 		return true;
 	else return false;
 }

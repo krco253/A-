@@ -17,7 +17,9 @@ int main()
 //	test.scramble(); //randomizes Megaminx	
 	std::cout << std::endl << std::endl;
 	blank = test.rotate_bot();
+	std::cout << test.h << " " << test.g << " " << test.f << std::endl;
 	blank.print();
+	std::cout << blank.h << " " << blank.g << " " << blank.f << std::endl;
 //	test.rotate_bot();
 //	test.print();
 
