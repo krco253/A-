@@ -53,7 +53,6 @@ class Megaminx
 		
 		~Megaminx();
 
-		friend void get_rand_ints(int rands[], int sum);
 
 	private:
 		Face faces_array1[SIDE_1_SIZE];

@@ -267,22 +267,6 @@ void Megaminx::print()
 	std::cout << std::endl;
 }	
 
-void get_rand_ints(int rands[], int sum)
-{
-	std::random_device rand_dev;
-	std::uniform_int_distribution<int> range(0,sum/12);
-	
-	int total = 0;
-	for(int i = 0; i < 11; i++)
-	{
-		rands[i] = range(rand_dev);
-		total++;
-	} 
-	rands[10] = sum - total / (range(rand_dev)+1);
-	total = total + rands[10];
-	rands[11] = sum - total;
-}
-
 void Megaminx::scramble_top(int random)
 {
 	//scramble tops from "side 1" view (faces 4 and 5 from side 2 hidden)
@@ -896,26 +880,69 @@ void Megaminx::scramble()
 	std::cout << "Enter number of desired moves: ";
 	std::cin >> moves;
 	
-	int rands[12];
-	get_rand_ints(rands, moves);
 	//std::cout << "The tops from view of side 1 face 3 view will be scrambled " << rand3 << " times." << std::endl;
-	
-	//picks a "random" number between 1-10
-	// then turns the top from side 2 view clockwise
-	// that number of times
-	scramble_top(rands[0]);
-	// scramble side 2 bottom
-	scramble_bottom(rands[1]);
-	scramble_left_side(rands[2]);
-	scramble_right_side(rands[3]);
-	scramble_bot_left(rands[4]);
-	scramble_bot_right(rands[5]);
-	scramble_2_2(rands[6]);
-	scramble_2_3(rands[8]);
-	scramble_2_4(rands[7]);
-	scramble_2_5(rands[9]);
-	scramble_2_1(rands[10]);
-	scramble_1_2(rands[11]);	
+
+	std::random_device rand_dev;
+	std::uniform_int_distribution<int> range(1,12);
+	for(int i = 0; i < moves; i++)
+	{
+		int which_move = range(rand_dev);
+
+		switch(which_move)
+		{
+		case 0:
+		{
+			this->scramble_top(1);	 
+			break;
+		}
+		case 1:
+		{	this->scramble_bottom(1);
+			break;
+		}
+		case 2:
+		{	this->scramble_left_side(1);
+			break;
+		}
+		case 3:
+		{	this->scramble_right_side(1);
+			break;
+		}
+		case 4:
+		{	this->scramble_1_2(1);
+			break;
+		}
+		case 5:
+		{	this->scramble_bot_left(1);
+			break;
+		}
+		case 6:
+		{	this->scramble_bot_right(1);
+			break;
+		}
+		case 7:
+		{	this->scramble_2_2(1);
+			break;
+		}
+		case 8:
+		{	this->scramble_2_4(1);
+			break;
+		}
+		case 9:
+		{	this->scramble_2_1(1);
+			break;
+		}
+		case 10:
+		{	this->scramble_2_3(1);
+			break;
+		}
+		case 11:
+		{	this->scramble_2_5(1);
+			break;
+		}
+
+	}
+
+}	
 
 }
 

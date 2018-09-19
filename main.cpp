@@ -14,12 +14,12 @@ int main()
 	Megaminx test;
 	Megaminx blank;
 	int moves_to_solve = 0;
-	test.print(); //prints Megaminx
+//	test.print(); //prints Megaminx
 	test.scramble(); //randomizes Megaminx
 //	test.scramble_1_2(1); //1_2??
-	std::cout << std::endl << "Scrambled Megaminx: ";	
+//	std::cout << std::endl << "Scrambled Megaminx: ";	
 	std::cout << std::endl << std::endl;
-	test.print();
+//	test.print();
 //	std::cout << std::endl << std::endl;
 //	blank = test.rotate_1_2();
 //	blank.print();

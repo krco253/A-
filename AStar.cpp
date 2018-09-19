@@ -179,16 +179,20 @@ bool AStar::is_solved()
 
 Megaminx AStar::solve(int &depth)
 {
+	Megaminx blank;
 	Megaminx top_mega = this->megaminx_queue.top();
 	if (top_mega.is_solved())
 		return (top_mega);
-	while(!(top_mega.is_solved()))
+	while(!(top_mega == blank))
 	{
 		megaminx_queue.pop();
 		depth = top_mega.g;
 		depth++;
 		this->expand_megaminx_node(top_mega, depth);
 		top_mega = this->megaminx_queue.top();
+		if (top_mega==blank)
+			return(top_mega);
 	}
-
+	
+	
 }
