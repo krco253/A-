@@ -33,12 +33,42 @@ void Face::print_center()
 {
 	(center).print();
 }
-
+void Face::sync(std::string which_row) //which_row was changed
+{
+	if(which_row == "top")
+	{
+		this->top_left.row[0] = this->top.row[0];
+		this->top_right.row[0] = this->top.row[2];
+	}
+	else if(which_row == "top_left")
+	{
+		this->center.row[0] = top_left.row[1];
+		this->bot_left.row[0] = top_left.row[2];
+		this->top.row[0] = top_left.row[0];
+	}
+	else if(which_row == "bot_left")
+	{
+		this->top_left.row[2] = bot_left.row[0];
+		this->bot_right.row[2] = bot_left.row[2];
+	}
+	else if(which_row == "top_right")
+	{
+		this->bot_right.row[0] = top_right.row[2];
+		this->center.row[2] = top_right.row[1];
+		this->top.row[2] = top_right.row[0];
+	}
+	else if(which_row == "bot_right")
+	{
+		this->top_right.row[2] = bot_right.row[0];
+		this->bot_left.row[2] = bot_right.row[2];
+	}
+	else return;	
+}
 void Face::print_bot1()
 {
 	(bot_left.row[0]).print_ansi_color();
 	std::cout << " ";
-	(bot_right.row[2]).print_ansi_color(); 
+	(bot_right.row[0]).print_ansi_color(); 
 
 }
 void Face::print_bot2()

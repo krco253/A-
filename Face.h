@@ -18,6 +18,8 @@ class Face
 		void print_bot1();
 		void print_bot2();
 		void print_bot3();
+		void sync(std::string which_row); //which_row was changed
+
 		bool operator==(const Face &other) const;
 		bool operator!=(const Face &other) const;		 
 		~Face();

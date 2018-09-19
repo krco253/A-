@@ -267,13 +267,20 @@ void Megaminx::print()
 	std::cout << std::endl;
 }	
 
-void get_rand_ints(int &one, int &two, int sum)
+void get_rand_ints(int rands[], int sum)
 {
 	std::random_device rand_dev;
-	std::uniform_int_distribution<int> range(0,sum/2);
+	std::uniform_int_distribution<int> range(0,sum/12);
 	
-	one = range(rand_dev);
-	two = sum - (one + two); 
+	int total = 0;
+	for(int i = 0; i < 11; i++)
+	{
+		rands[i] = range(rand_dev);
+		total++;
+	} 
+	rands[10] = sum - total / (range(rand_dev)+1);
+	total = total + rands[10];
+	rands[11] = sum - total;
 }
 
 void Megaminx::scramble_top(int random)
@@ -285,10 +292,20 @@ void Megaminx::scramble_top(int random)
 	{
 		Row temp = faces_array2[4].top;
 		faces_array2[4].top = faces_array2[5].top;
+		faces_array2[4].sync("top");
+	
 		faces_array2[5].top = faces_array1[1].top;
+		faces_array2[5].sync("top");
+		
 		faces_array1[1].top = faces_array1[2].top;
+		faces_array1[1].sync("top");
+
 		faces_array1[2].top = faces_array1[3].top;
+		faces_array1[2].sync("top");
+
 		faces_array1[3].top = temp;
+		faces_array1[3].sync("top");
+
 		turns++;	
 	}
 }
@@ -303,13 +320,574 @@ void Megaminx::scramble_bottom(int random)
 	{
 		Row temp = faces_array1[4].top;
 		faces_array1[4].top = faces_array1[5].top;
+		faces_array1[4].sync("top");
+	
 		faces_array1[5].top = faces_array2[1].top;
+		faces_array1[5].sync("top");	
+
 		faces_array2[1].top = faces_array2[2].top;
+		faces_array2[1].sync("top");	
+
 		faces_array2[2].top = faces_array2[3].top;
+		faces_array2[2].sync("top");
+
 		faces_array2[3].top = temp;
+		faces_array2[3].sync("top");
+
 		turns++;	
 
 	}
+}
+
+void Megaminx::scramble_bot_left(int random)
+{
+	//scramble "bottom left"
+	//from "side 1" view
+	//rotate clockwise random amount of times
+	int turns = 0;
+	while (turns < random)
+	{
+		Row temp = faces_array1[5].top_right;
+		faces_array1[5].top_right = faces_array1[2].bot_left;
+		faces_array1[5].sync("top_right");
+
+		faces_array1[2].bot_left = faces_array1[1].bot_right;
+		faces_array1[2].sync("bot_left");
+	
+		faces_array1[1].bot_right = faces_array2[3].top_left;
+		faces_array1[1].sync("bot_right");
+	
+		faces_array2[3].top_left = faces_array2[0].bot_right;
+		faces_array2[3].sync("top_left");
+		
+		faces_array2[0].bot_right = temp;
+		faces_array2[0].sync("bot_right");
+		turns++;
+	}
+}
+
+Megaminx Megaminx::rotate_bot_left()
+{
+	//scramble "bottom left"
+	//from "side 1" view
+	//rotate clockwise random amount of times
+
+	Megaminx manip_megaminx; //create a megaminx to apply manipulations to
+	manip_megaminx = *this;	//copy this megaminx into it	
+
+	Row temp = (manip_megaminx.faces_array2[0]).bot_right;
+	(manip_megaminx.faces_array2[0]).bot_right = (manip_megaminx.faces_array2[3]).top_left;
+	(manip_megaminx.faces_array2[0]).sync("bot_right");
+
+ 	(manip_megaminx.faces_array2[3]).top_left = (manip_megaminx.faces_array1[1]).bot_right;
+ 	(manip_megaminx.faces_array2[3]).sync("top_left"); 
+
+	(manip_megaminx.faces_array1[1]).bot_right = (manip_megaminx.faces_array1[2]).bot_left;
+	(manip_megaminx.faces_array1[1]).sync("bot_right"); 
+
+	(manip_megaminx.faces_array1[2]).bot_left = (manip_megaminx.faces_array1[5]).top_right;
+	(manip_megaminx.faces_array1[2]).sync("bot_left"); 	
+
+	(manip_megaminx.faces_array1[5]).top_right = temp;
+	(manip_megaminx.faces_array1[5]).sync("top_right"); 	
+
+	return manip_megaminx;
+	
+}
+
+void Megaminx::scramble_bot_right(int random)
+{
+	//scramble "bottom right"
+	//from "side 1" view
+	// rotate clockwise random amount of times
+	int turns = 0;
+	while (turns < random)
+	{
+		Row temp = faces_array1[4].top_right;
+		faces_array1[4].top_right = faces_array2[0].bot_left;
+		faces_array1[4].sync("top_right");
+		
+		faces_array2[0].bot_left = faces_array2[1].bot_left;
+		faces_array2[0].sync("bot_left");
+		
+		faces_array2[1].bot_left = faces_array1[3].bot_left;
+		faces_array2[1].sync("bot_left");
+
+		faces_array1[3].bot_left = faces_array1[2].bot_right;
+		faces_array1[3].sync("bot_left");
+
+		faces_array1[2].bot_right = temp;
+		faces_array1[2].sync("bot_right");
+
+		turns++;
+	}
+
+}
+
+Megaminx Megaminx::rotate_bot_right()
+{
+	//scramble "bottom left"
+	//from "side 1" view
+	//rotate clockwise random amount of times
+
+	Megaminx manip_megaminx; //create a megaminx to apply manipulations to
+	manip_megaminx = *this;	//copy this megaminx into it	
+
+	Row temp = (manip_megaminx.faces_array1[2]).bot_right;
+	(manip_megaminx.faces_array1[2]).bot_right = (manip_megaminx.faces_array1[3]).bot_left;
+	(manip_megaminx.faces_array1[2]).sync("bot_right");
+
+ 	(manip_megaminx.faces_array1[3]).bot_left = (manip_megaminx.faces_array2[1]).bot_left;
+ 	(manip_megaminx.faces_array1[3]).sync("bot_left"); 
+
+	(manip_megaminx.faces_array2[1]).bot_left = (manip_megaminx.faces_array2[0]).bot_left;
+	(manip_megaminx.faces_array2[1]).sync("bot_left"); 
+
+	(manip_megaminx.faces_array2[0]).bot_left = (manip_megaminx.faces_array1[4]).top_right;
+	(manip_megaminx.faces_array2[0]).sync("bot_left"); 	
+
+	(manip_megaminx.faces_array1[4]).top_right = temp;
+	(manip_megaminx.faces_array1[4]).sync("top_right"); 	
+
+	return manip_megaminx;	
+}
+
+void Megaminx::scramble_2_2(int random)
+{
+	//scramble blocks around face 2 from side 2 view
+	//rotate clockwise random amount of times
+	int turns = 0;
+	while (turns < random)
+	{
+		Row temp = faces_array2[1].top_left;
+		faces_array2[1].top_left = faces_array2[0].top;
+		faces_array2[1].sync("top_left");
+		
+		faces_array2[0].top = faces_array2[3].top_right;
+		faces_array2[1].sync("top");
+
+		faces_array2[3].top_right = faces_array2[5].bot_left;
+		faces_array2[3].sync("top_right");
+
+		faces_array2[5].bot_left = faces_array2[4].bot_right;
+		faces_array2[5].sync("bot_left");
+
+		faces_array2[4].bot_right = temp;
+		faces_array2[4].sync("bot_right");
+
+		turns++;
+	}
+}
+
+
+Megaminx Megaminx::rotate_2_2()
+{
+	//scramble "bottom left"
+	//from "side 1" view
+	//rotate clockwise random amount of times
+
+	Megaminx manip_megaminx; //create a megaminx to apply manipulations to
+	manip_megaminx = *this;	//copy this megaminx into it	
+
+	Row temp = (manip_megaminx.faces_array2[4]).bot_right;
+	(manip_megaminx.faces_array2[4]).bot_right = (manip_megaminx.faces_array2[5]).bot_left;
+	(manip_megaminx.faces_array2[4]).sync("bot_right");
+
+ 	(manip_megaminx.faces_array2[5]).bot_left = (manip_megaminx.faces_array2[3]).top_right;
+ 	(manip_megaminx.faces_array2[5]).sync("bot_left"); 
+
+	(manip_megaminx.faces_array2[3]).top_right = (manip_megaminx.faces_array2[0]).top;
+	(manip_megaminx.faces_array1[1]).sync("top_right"); 
+
+	(manip_megaminx.faces_array2[0]).top = (manip_megaminx.faces_array2[1]).top_left;
+	(manip_megaminx.faces_array2[0]).sync("top"); 	
+
+	(manip_megaminx.faces_array2[1]).top_left = temp;
+	(manip_megaminx.faces_array2[1]).sync("top_left"); 	
+
+	return manip_megaminx;
+
+}
+
+
+void Megaminx::scramble_2_4(int random)
+{
+	int turns = 0;
+	while(turns < random)
+	{
+		Row temp = faces_array2[1].bot_left;
+		faces_array2[1].bot_left = faces_array2[2].bot_right;
+		faces_array2[1].sync("bot_left");
+		
+		faces_array2[2].bot_right = faces_array2[5].top_left;
+		faces_array2[2].sync("bot_right");
+		
+		faces_array2[5].top_left = faces_array1[0].bot_left;
+		faces_array2[5].sync("top_left");
+			
+		faces_array1[0].bot_left = faces_array1[3].top_right;
+		faces_array1[0].sync("bot_left");
+		
+		faces_array1[3].top_right = temp;
+		faces_array1[3].sync("top_right");
+		
+		turns++;
+	}
+}
+
+Megaminx Megaminx::rotate_2_4()
+{
+	//scramble "bottom left"
+	//from "side 1" view
+	//rotate clockwise random amount of times
+
+	Megaminx manip_megaminx; //create a megaminx to apply manipulations to
+	manip_megaminx = *this;	//copy this megaminx into it	
+
+	Row temp = (manip_megaminx.faces_array1[3]).top_right;
+	(manip_megaminx.faces_array1[3]).top_right = (manip_megaminx.faces_array1[0]).bot_left;
+	(manip_megaminx.faces_array1[3]).sync("top_right");
+
+ 	(manip_megaminx.faces_array1[0]).bot_left = (manip_megaminx.faces_array2[5]).top_left;
+ 	(manip_megaminx.faces_array1[0]).sync("bot_left"); 
+
+	(manip_megaminx.faces_array2[5]).top_left = (manip_megaminx.faces_array2[2]).bot_right;
+	(manip_megaminx.faces_array2[5]).sync("top_left"); 
+
+	(manip_megaminx.faces_array2[2]).bot_right = (manip_megaminx.faces_array2[1]).bot_left;
+	(manip_megaminx.faces_array2[2]).sync("bot_right"); 	
+
+	(manip_megaminx.faces_array2[1]).bot_left = temp;
+	(manip_megaminx.faces_array2[1]).sync("bot_left"); 	
+
+	return manip_megaminx;
+}
+
+void Megaminx::scramble_2_1(int random)
+{
+	int turns = 0;
+	while(turns < random)
+	{
+		Row temp = faces_array2[4].bot_left;
+		faces_array2[4].bot_left = faces_array1[3].bot_right;
+		faces_array2[4].sync("bot_left");
+
+		faces_array1[3].bot_right = faces_array1[5].top_right;
+		faces_array1[3].sync("bot_right");
+
+		faces_array1[5].top_right = faces_array2[0].top_left;
+		faces_array1[5].sync("top_right");
+		
+		faces_array2[0].top_left = faces_array2[2].top_right;
+		faces_array2[0].sync("top_left");
+		
+		faces_array2[2].top_right = temp;
+		faces_array2[2].sync("top_right");
+
+		turns++;
+	}
+}
+
+Megaminx Megaminx::rotate_2_1()
+{
+	//scramble "bottom left"
+	//from "side 1" view
+	//rotate clockwise random amount of times
+
+	Megaminx manip_megaminx; //create a megaminx to apply manipulations to
+	manip_megaminx = *this;	//copy this megaminx into it	
+
+	Row temp = (manip_megaminx.faces_array2[2]).top_right;
+	(manip_megaminx.faces_array2[2]).top_right = (manip_megaminx.faces_array2[0]).top_left;
+	(manip_megaminx.faces_array2[2]).sync("top_right");
+
+ 	(manip_megaminx.faces_array2[0]).top_left = (manip_megaminx.faces_array1[5]).top_right;
+ 	(manip_megaminx.faces_array2[0]).sync("top_left"); 
+
+	(manip_megaminx.faces_array1[5]).top_right = (manip_megaminx.faces_array1[3]).bot_right;
+	(manip_megaminx.faces_array1[5]).sync("top_right"); 
+
+	(manip_megaminx.faces_array1[3]).bot_right = (manip_megaminx.faces_array2[4]).bot_left;
+	(manip_megaminx.faces_array1[3]).sync("bot_right"); 	
+
+	(manip_megaminx.faces_array2[4]).bot_left = temp;
+	(manip_megaminx.faces_array2[4]).sync("bot_left"); 	
+
+	return manip_megaminx;
+
+}
+
+void Megaminx::scramble_2_3(int random)
+{
+	int turns = 0;
+	while(turns < random)
+	{
+		Row temp = faces_array2[0].top_right;
+		faces_array2[0].top_right = faces_array1[4].top_right;
+		faces_array2[0].sync("top_right");
+
+		faces_array1[4].top_right = faces_array1[1].bot_left;
+		faces_array1[4].sync("top_right");
+
+		faces_array1[1].bot_left = faces_array2[5].bot_right;
+		faces_array1[1].sync("bot_left");
+
+		faces_array2[5].bot_right = faces_array2[2].top_left;
+		faces_array2[5].sync("bot_right");
+	
+		faces_array2[2].top_left = temp;
+		faces_array2[2].sync("top_left");
+		
+		turns++;
+	}
+}
+
+Megaminx Megaminx::rotate_2_3()
+{
+	//scramble "bottom left"
+	//from "side 1" view
+	//rotate clockwise random amount of times
+
+	Megaminx manip_megaminx; //create a megaminx to apply manipulations to
+	manip_megaminx = *this;	//copy this megaminx into it	
+
+	Row temp = (manip_megaminx.faces_array2[2]).top_left;
+	(manip_megaminx.faces_array2[2]).top_left = (manip_megaminx.faces_array2[5]).bot_right;
+	(manip_megaminx.faces_array2[2]).sync("top_left");
+
+ 	(manip_megaminx.faces_array2[5]).bot_right = (manip_megaminx.faces_array1[1]).bot_left;
+ 	(manip_megaminx.faces_array2[5]).sync("bot_right"); 
+
+	(manip_megaminx.faces_array1[1]).bot_left = (manip_megaminx.faces_array1[4]).top_right;
+	(manip_megaminx.faces_array1[1]).sync("bot_left"); 
+
+	(manip_megaminx.faces_array1[4]).top_right = (manip_megaminx.faces_array2[0]).top_right;
+	(manip_megaminx.faces_array1[4]).sync("top_right"); 	
+
+	(manip_megaminx.faces_array2[0]).top_right = temp;
+	(manip_megaminx.faces_array2[0]).sync("top_right"); 	
+
+	return manip_megaminx;
+
+}
+
+void Megaminx::scramble_2_5(int random)
+{
+	int turns = 0;
+	while(turns < random)
+	{
+		Row temp = faces_array2[2].bot_left;
+		faces_array2[2].bot_left = faces_array2[3].bot_right;
+		faces_array2[2].sync("bot_left");
+
+		faces_array2[3].bot_right = faces_array1[1].top_left;
+		faces_array2[3].sync("bot_right");
+
+		faces_array1[1].top_left = faces_array1[0].bot_right;
+		faces_array1[1].sync("top_left");
+
+		faces_array1[0].bot_right = faces_array2[4].top_right;
+		faces_array1[0].sync("bot_right");
+
+		faces_array2[4].top_right = temp;
+		faces_array2[4].sync("top_right");
+	
+		turns++;
+	}
+}
+
+Megaminx Megaminx::rotate_2_5()
+{
+	//scramble "bottom left"
+	//from "side 1" view
+	//rotate clockwise random amount of times
+
+	Megaminx manip_megaminx; //create a megaminx to apply manipulations to
+	manip_megaminx = *this;	//copy this megaminx into it	
+
+	Row temp = (manip_megaminx.faces_array2[4]).top_right;
+	(manip_megaminx.faces_array2[4]).top_right = (manip_megaminx.faces_array1[0]).bot_right;
+	(manip_megaminx.faces_array2[4]).sync("top_right");
+
+ 	(manip_megaminx.faces_array1[0]).bot_right = (manip_megaminx.faces_array1[1]).top_left;
+ 	(manip_megaminx.faces_array1[0]).sync("bot_right"); 
+
+	(manip_megaminx.faces_array1[1]).top_left = (manip_megaminx.faces_array2[3]).bot_right;
+	(manip_megaminx.faces_array1[1]).sync("top_left"); 
+
+	(manip_megaminx.faces_array2[3]).bot_right = (manip_megaminx.faces_array2[2]).bot_left;
+	(manip_megaminx.faces_array2[3]).sync("bot_right"); 	
+
+	(manip_megaminx.faces_array2[2]).bot_left = temp;
+	(manip_megaminx.faces_array2[2]).sync("bot_left"); 	
+
+	return manip_megaminx;
+
+}
+
+void Megaminx::scramble_left_side(int random)
+{
+	//scramble "left" rotating side of megaminx
+	//from "side 1" view
+	//rotate clockwise "random" amount of times
+	int turns = 0;
+	while (turns < random) 
+	{
+		Row temp = faces_array1[2].top_left;
+
+		faces_array1[2].top_left = faces_array1[0].top_left;
+		faces_array1[2].sync("top_left");
+		faces_array1[0].top_left = faces_array2[5].top_right;
+		faces_array1[0].sync("top_left");
+		faces_array2[5].top_right = faces_array2[3].bot_left;
+		faces_array2[5].sync("top_right");
+		faces_array2[3].bot_left = faces_array1[4].bot_right;
+		faces_array2[3].sync("bot_left");
+		faces_array1[4].bot_right = temp;
+		faces_array1[4].sync("bot_right");
+		turns++;	
+	}
+
+}
+
+Megaminx Megaminx::rotate_left_side()
+{
+	//scramble "bottom left"
+	//from "side 1" view
+	//rotate clockwise random amount of times
+
+	Megaminx manip_megaminx; //create a megaminx to apply manipulations to
+	manip_megaminx = *this;	//copy this megaminx into it	
+
+	Row temp = (manip_megaminx.faces_array1[4]).bot_right;
+	(manip_megaminx.faces_array1[4]).bot_right = (manip_megaminx.faces_array2[3]).bot_left;
+	(manip_megaminx.faces_array1[4]).sync("bot_right");
+
+ 	(manip_megaminx.faces_array2[3]).bot_left = (manip_megaminx.faces_array2[5]).top_right;
+ 	(manip_megaminx.faces_array2[3]).sync("bot_left"); 
+
+	(manip_megaminx.faces_array2[5]).top_right = (manip_megaminx.faces_array1[0]).top_left;
+	(manip_megaminx.faces_array2[5]).sync("top_right"); 
+
+	(manip_megaminx.faces_array1[0]).top_left = (manip_megaminx.faces_array1[2]).top_left;
+	(manip_megaminx.faces_array1[0]).sync("top_left"); 	
+
+	(manip_megaminx.faces_array1[2]).top_left = temp;
+	(manip_megaminx.faces_array1[2]).sync("top_left"); 	
+
+	return manip_megaminx;
+
+}
+
+void Megaminx::scramble_right_side(int random)
+{
+	//scramble "right" rotating side of megaminx
+	//from "side 1" view
+	//rotate clockwise "random" amount of times
+	int turns = 0;
+	while (turns < random)
+	{
+		Row temp = faces_array1[2].top_right;
+		faces_array1[2].top_right = faces_array1[5].bot_left;
+		faces_array1[2].sync("top_right");
+	
+		faces_array1[5].bot_left = faces_array2[1].bot_right;
+		faces_array1[5].sync("bot_left");
+
+		faces_array2[1].bot_right = faces_array2[4].top_left;
+		faces_array2[1].sync("bot_right");
+	
+		faces_array2[4].top_left = faces_array1[0].top_right;
+		faces_array2[4].sync("top_left");
+
+		faces_array1[0].top_right = temp;
+		faces_array1[0].sync("top_right");
+
+		turns++;
+	}
+
+}
+Megaminx Megaminx::rotate_right_side()
+{
+	//scramble "bottom left"
+	//from "side 1" view
+	//rotate clockwise random amount of times
+
+	Megaminx manip_megaminx; //create a megaminx to apply manipulations to
+	manip_megaminx = *this;	//copy this megaminx into it	
+
+	Row temp = (manip_megaminx.faces_array1[0]).top_right;
+	(manip_megaminx.faces_array1[0]).top_right = (manip_megaminx.faces_array2[4]).top_left;
+	(manip_megaminx.faces_array1[0]).sync("top_right");
+
+ 	(manip_megaminx.faces_array2[4]).top_left = (manip_megaminx.faces_array2[1]).bot_right;
+ 	(manip_megaminx.faces_array2[4]).sync("top_left"); 
+
+	(manip_megaminx.faces_array2[1]).bot_right = (manip_megaminx.faces_array1[5]).bot_left;
+	(manip_megaminx.faces_array2[1]).sync("bot_right"); 
+
+	(manip_megaminx.faces_array1[5]).bot_left = (manip_megaminx.faces_array1[2]).top_right;
+	(manip_megaminx.faces_array1[5]).sync("bot_left"); 	
+
+	(manip_megaminx.faces_array1[2]).top_right = temp;
+	(manip_megaminx.faces_array1[2]).sync("top_right"); 	
+
+	return manip_megaminx;
+
+}
+
+void Megaminx::scramble_1_2(int random)
+{
+	//scramble "bottom left" rotating side of megaminx
+	//from "side 1" view
+	// rotate clockwise "random" amount of times
+	int turns = 0;
+	while(turns < random)
+	{
+		Row temp = faces_array1[0].top;
+		faces_array1[0].top = faces_array1[1].top_right;
+	
+		faces_array1[1].top_right = faces_array1[4].bot_left;
+		faces_array1[1].sync("top_right");
+	
+		faces_array1[4].bot_left = faces_array1[5].bot_right;
+		faces_array1[4].sync("bot_left");
+
+		faces_array1[5].bot_right = faces_array1[3].top_right;
+		faces_array1[5].sync("bot_right");
+		
+		faces_array1[3].top_right = temp;
+		faces_array1[3].sync("top_right");
+		turns++;
+	}
+}
+Megaminx Megaminx::rotate_1_2()
+{
+	//scramble "bottom left"
+	//from "side 1" view
+	//rotate clockwise random amount of times
+
+	Megaminx manip_megaminx; //create a megaminx to apply manipulations to
+	manip_megaminx = *this;	//copy this megaminx into it	
+
+	Row temp = (manip_megaminx.faces_array1[3]).top_right;
+	(manip_megaminx.faces_array1[3]).top_right = (manip_megaminx.faces_array1[5]).bot_right;
+	(manip_megaminx.faces_array1[3]).sync("top_right");
+
+ 	(manip_megaminx.faces_array1[5]).bot_right = (manip_megaminx.faces_array1[4]).bot_left;
+ 	(manip_megaminx.faces_array1[5]).sync("bot_right"); 
+
+	(manip_megaminx.faces_array1[4]).bot_left = (manip_megaminx.faces_array1[1]).top_right;
+	(manip_megaminx.faces_array1[4]).sync("bot_left"); 
+
+	(manip_megaminx.faces_array1[1]).top_right = (manip_megaminx.faces_array1[0]).top;
+	(manip_megaminx.faces_array1[1]).sync("top_right"); 	
+
+	(manip_megaminx.faces_array1[0]).top = temp;
+	(manip_megaminx.faces_array1[0]).sync("top"); 	
+
+	return manip_megaminx;
+
 }
 
 void Megaminx::scramble()
@@ -318,20 +896,27 @@ void Megaminx::scramble()
 	std::cout << "Enter number of desired moves: ";
 	std::cin >> moves;
 	
-	int rand1, rand2;
-	get_rand_ints(rand1, rand2, moves);
-	std::cout << "The tops of side 1 will be scrambled " << rand1 << " times." << std::endl;
-	std::cout << "The tops of side 2 bottom view will be scrambled " << rand2 << " times." << std::endl;
+	int rands[12];
+	get_rand_ints(rands, moves);
 	//std::cout << "The tops from view of side 1 face 3 view will be scrambled " << rand3 << " times." << std::endl;
 	
 	//picks a "random" number between 1-10
 	// then turns the top from side 2 view clockwise
 	// that number of times
-	scramble_top(rand1);
+	scramble_top(rands[0]);
 	// scramble side 2 bottom
-	scramble_bottom(rand2);
-	int current_depth = this->g;
-	this->distance_to_solved(current_depth);	
+	scramble_bottom(rands[1]);
+	scramble_left_side(rands[2]);
+	scramble_right_side(rands[3]);
+	scramble_bot_left(rands[4]);
+	scramble_bot_right(rands[5]);
+	scramble_2_2(rands[6]);
+	scramble_2_3(rands[8]);
+	scramble_2_4(rands[7]);
+	scramble_2_5(rands[9]);
+	scramble_2_1(rands[10]);
+	scramble_1_2(rands[11]);	
+
 }
 
 void Megaminx::distance_to_solved(int depth)
@@ -397,9 +982,6 @@ Megaminx Megaminx::rotate_top()
 	(manip_megaminx.faces_array1[3]).top = (manip_megaminx.faces_array1[2]).top;
 	(manip_megaminx.faces_array1[2]).top = (manip_megaminx.faces_array1[1]).top;
 	(manip_megaminx.faces_array1[1]).top = temp;
-
-	int depth = (this->g);
-	manip_megaminx.distance_to_solved(depth);
 	
 	return manip_megaminx;
 
@@ -416,27 +998,25 @@ Megaminx Megaminx::rotate_bot()
 	Megaminx manip_megaminx; //create a megaminx to apply manipulations to
 	manip_megaminx = *this;	//copy this megaminx into it
 
-	Row temp = (manip_megaminx.faces_array2[5]).top;
+	Row temp = (manip_megaminx.faces_array1[4]).top;
 	(manip_megaminx.faces_array1[4]).top = (manip_megaminx.faces_array2[3]).top;
 	(manip_megaminx.faces_array2[3]).top = (manip_megaminx.faces_array2[2]).top;
 	(manip_megaminx.faces_array2[2]).top = (manip_megaminx.faces_array2[1]).top;
 	(manip_megaminx.faces_array2[1]).top = (manip_megaminx.faces_array1[5]).top;
 	(manip_megaminx.faces_array1[5]).top = temp;
 
-	int depth = (this->g);	
-	manip_megaminx.distance_to_solved(depth);
-
 	return manip_megaminx;
 }
 
-bool Megaminx::operator<(const Megaminx &other) const
+
+bool Megaminx::operator>(const Megaminx &other) const
 {
-	if(this->f < other.f)
+	if(this->f < other.f) //std::priority_queue puts largest element on top by default, but we want the smallest.
 		return true;
 	else return false;
 }
 
-bool Megaminx::operator>(const Megaminx &other) const
+bool Megaminx::operator<(const Megaminx &other) const
 {
 	if(this->f > other.f)
 		return true;
@@ -460,5 +1040,13 @@ bool Megaminx::operator==(const Megaminx &other) const
 		return true;
 }
 
+bool Megaminx::is_solved()
+{
+	Megaminx blank;
+	if(*this == blank)
+		return true;
+	else
+		return false;
+}
 
 Megaminx::~Megaminx(){ }	

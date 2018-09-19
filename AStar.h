@@ -14,8 +14,8 @@ class AStar
 		AStar(Megaminx puzzle); //generates a priority queue based on the Megaminx puzzle given
 		AStar(const AStar &copy);
 		bool is_solved(); //returns true if the Megaminx is solved
-		Megaminx solve(int &number_of_moves); 
-		
+		Megaminx solve(int &depth); 
+		void expand_megaminx_node(Megaminx puzzle, int deep);		
 
 	private:
 		Megaminx unsolved_puzzle;
