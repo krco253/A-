@@ -889,7 +889,7 @@ void Megaminx::scramble()
 		{	this->scramble_bottom(1);
 			break;
 		}
-		case 2:
+/*		case 2:
 		{	this->scramble_left_side(1);
 			break;
 		}
@@ -929,7 +929,7 @@ void Megaminx::scramble()
 		{	this->scramble_2_5(1);
 			break;
 		}
-
+*/
 		}
 	}
 
