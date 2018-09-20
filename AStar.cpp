@@ -7,12 +7,9 @@
 -----------------------------------*/
 #include "AStar.h"
 
-/* TODO
-1. finish constructor (Include priority queue)
-2. finish solve()
-
-*/
-
+//AStar constructor
+//Given a Megaminx to solve, (if it is unsolved), 
+//expand its 12 children - representing moving one of 12 faces 
 AStar::AStar(Megaminx puzzle) 
 {
 	this->unsolved_puzzle = puzzle;
@@ -93,9 +90,11 @@ AStar::AStar(Megaminx puzzle)
 	}
 }
 
+//Given a scrambled megaminx, expand it and add its children 
+//to the search frontier
 void AStar::expand_megaminx_node(Megaminx puzzle, int deep)
 {
-	nodes_expanded++;
+	nodes_expanded++; //increase value of nodes expanded by one
 	//make child for moving top counterclockwise
 	Megaminx top_rotation; 
 	top_rotation = puzzle.rotate_top();
@@ -166,12 +165,14 @@ void AStar::expand_megaminx_node(Megaminx puzzle, int deep)
 	megaminx_queue.push(t_5_rotation);		
 
 }
-
+//copy constructor - mostly unnecessary
 AStar::AStar(const AStar &copy)
 {
 	this->unsolved_puzzle = copy.unsolved_puzzle;
 }
 
+//return true if the puzzle is solved - i.e., the top megaminx
+// is solved
 bool AStar::is_solved()
 {
 	Megaminx blank;
@@ -181,21 +182,20 @@ bool AStar::is_solved()
 		return false;
 }
 
+//implementation of A*
 Megaminx AStar::solve(int &depth)
 {
-	Megaminx blank;
 	Megaminx top_mega = this->megaminx_queue.top();
-	if (top_mega.calculate_stickers() == 0)
-		return (top_mega);
-	while(top_mega.calculate_stickers() != 0)
+	if (top_mega.calculate_stickers() == 0) //if the number of stickers out of place is 0 -- i.e., is solved
+		return (top_mega); 
+	while(top_mega.calculate_stickers() != 0) //if not solved
 	{
-//		top_mega.print();
-		megaminx_queue.pop();
-		depth = top_mega.g;
+		megaminx_queue.pop(); //pop the current megaminx
+		depth = top_mega.g;  //prepare to assign depth to its children
 		depth++;
-		this->expand_megaminx_node(top_mega, depth);
-		top_mega = this->megaminx_queue.top();
+		this->expand_megaminx_node(top_mega, depth); //add its children to the queue
+		top_mega = this->megaminx_queue.top(); //new winner!
 	}
-	return top_mega;
+	return top_mega; //the solved megaminx!
 	
 }
