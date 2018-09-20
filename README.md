@@ -31,10 +31,13 @@ g++ -std=c++11 -o AStar AStar.cpp Block.cpp Row.cpp Face.cpp Megaminx.cpp main.c
 
 * Kelsey Cole 
 
+## Documented Bugs
+* Because of the sheer size of object Megaminx, this code, fully uncommented, generates out of memory errors. It works consistently when you comment out any 10 faces from scramble() in Megaminx and the constructor and expand_Megaminx in A*. So, in short, this code works, but will only rotate so many faces at a time because of the sheer size of  the data structure. For all experiments/plots, I've used the top and bottom functions uncommented.
+
 
 ## Acknowledgments
 
 * Used information from these sites to implement random number generator: https://en.cppreference.com/w/cpp/numeric/random/random_device and https://en.cppreference.com/w/cpp/numeric/random/uniform_int_distribution 
 * Also saw Harrison Incencio's GUI implementation on the discussion board, and drew inspiration for formatting my GUI output from it.
 * Michael Murray gave me my idea for how I've changed my randomization since my last project; he inspired the algorithm I chose, in that I assign each face a number, generate a random number and then choose the cooresponding face to rotate.
-* My heuristic was Tyler Price's idea in lecture
+* My heuristic was an idea presented in lecture
