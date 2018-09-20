@@ -6,13 +6,14 @@
 -----------------------------------*/
 #include "Megaminx.h"
 
+//empty constructor - generates a solved megaminx
 Megaminx::Megaminx()
 {
-	Block temp_q1[TOP_CAP];
-	Block temp_q2[TOP_CAP];
-	for(int i = 0; i < NUMBER_OF_FACES/2; i++)
+	Block temp_q1[TOP_CAP]; // these are used to temporarily store rows
+	Block temp_q2[TOP_CAP]; // there are two so the following loop can generate 2 colors at once
+	for(int i = 0; i < NUMBER_OF_FACES/2; i++) 
 	{
-		for (int j = 0; j <TOP_CAP; j++)
+		for (int j = 0; j <TOP_CAP; j++) //this fills the rows with blocks
 		{
 			Color color1 = Color(i);
 			Color color2 = Color(NUMBER_OF_FACES -(i+1));	
@@ -37,17 +38,20 @@ Megaminx::Megaminx()
 		Row botl2(temp_q2);
 		Row topl2(temp_q2);
  	
+		//now fill the faces with rows
 		Face temp_face1(center1, top1, topr1, botr1, botl1, topl1);
 		Face temp_face2(center2, top2, topr2, botr2, botl2, topl2);
 		faces_array1[i] = temp_face1;
 		faces_array2[i] = temp_face2;	
 	}		
 	
+	//set initial values
 	g = 0;
 	h = 0;
 	f = 0;		  	
 }
 
+//copy constructor
 Megaminx::Megaminx(const Megaminx &copy)
 {
 	for(int i = 0; i < NUMBER_OF_FACES/2; i++)
@@ -61,6 +65,8 @@ Megaminx::Megaminx(const Megaminx &copy)
 	this->f = copy.f;
 }
 
+//print Megaminx
+// see diagram in pdf for details
 void Megaminx::print()
 {
 	//side 1 face 0 top 
@@ -267,10 +273,11 @@ void Megaminx::print()
 	std::cout << std::endl;
 }	
 
+//this is a helper function for scramble
+// it works as if you're turning
+// face 0 side 1 clockwise
 void Megaminx::scramble_top(int random)
 {
-	//scramble tops from "side 1" view (faces 4 and 5 from side 2 hidden)
-	// "rotate" clockwise "random" amount of times
 	int turns = 0;
 	while (turns < random) 
 	{
@@ -294,11 +301,10 @@ void Megaminx::scramble_top(int random)
 	}
 }
 
+//helper function for scramble
+//this works as if you're turning side 2 face 0 clockwise
 void Megaminx::scramble_bottom(int random)
 {
-	//scramble bottom (which are "tops" by defintion of Face)
-	// from "side 1" view
-	// "rotate" clockwise "random" amount of times
 	int turns = 0;
 	while (turns < random) 
 	{
@@ -323,11 +329,10 @@ void Megaminx::scramble_bottom(int random)
 	}
 }
 
+//helper function for scramble
+//works as if turning face 1 side 4 clockwise
 void Megaminx::scramble_bot_left(int random)
 {
-	//scramble "bottom left"
-	//from "side 1" view
-	//rotate clockwise random amount of times
 	int turns = 0;
 	while (turns < random)
 	{
@@ -350,12 +355,10 @@ void Megaminx::scramble_bot_left(int random)
 	}
 }
 
+// used for solving
+//works as if turning side 1 face 5 counterclockwise
 Megaminx Megaminx::rotate_bot_left()
 {
-	//scramble "bottom left"
-	//from "side 1" view
-	//rotate clockwise random amount of times
-
 	Megaminx manip_megaminx; //create a megaminx to apply manipulations to
 	manip_megaminx = *this;	//copy this megaminx into it	
 
@@ -379,11 +382,10 @@ Megaminx Megaminx::rotate_bot_left()
 	
 }
 
+//helper function for scramble
+// works as if tunring face 4 side 1 clockwise
 void Megaminx::scramble_bot_right(int random)
 {
-	//scramble "bottom right"
-	//from "side 1" view
-	// rotate clockwise random amount of times
 	int turns = 0;
 	while (turns < random)
 	{
@@ -408,12 +410,10 @@ void Megaminx::scramble_bot_right(int random)
 
 }
 
+//helper for solving
+// works as if turning face 5 side 1 counterclockwise
 Megaminx Megaminx::rotate_bot_right()
 {
-	//scramble "bottom left"
-	//from "side 1" view
-	//rotate clockwise random amount of times
-
 	Megaminx manip_megaminx; //create a megaminx to apply manipulations to
 	manip_megaminx = *this;	//copy this megaminx into it	
 
@@ -436,10 +436,10 @@ Megaminx Megaminx::rotate_bot_right()
 	return manip_megaminx;	
 }
 
+//helper for scramble
+//works as if turning face 2 side 2 clockwise
 void Megaminx::scramble_2_2(int random)
 {
-	//scramble blocks around face 2 from side 2 view
-	//rotate clockwise random amount of times
 	int turns = 0;
 	while (turns < random)
 	{
@@ -463,13 +463,10 @@ void Megaminx::scramble_2_2(int random)
 	}
 }
 
-
+//helper function for solving
+//works as if turning face 2 side 2 counterclockwise
 Megaminx Megaminx::rotate_2_2()
 {
-	//scramble "bottom left"
-	//from "side 1" view
-	//rotate clockwise random amount of times
-
 	Megaminx manip_megaminx; //create a megaminx to apply manipulations to
 	manip_megaminx = *this;	//copy this megaminx into it	
 
@@ -493,7 +490,8 @@ Megaminx Megaminx::rotate_2_2()
 
 }
 
-
+//helper function for scramble
+//works as if turning face 4 side 2 clockwise
 void Megaminx::scramble_2_4(int random)
 {
 	int turns = 0;
@@ -519,12 +517,10 @@ void Megaminx::scramble_2_4(int random)
 	}
 }
 
+//helper for solving
+//works as if turning face 4 side 2 counterclockwise
 Megaminx Megaminx::rotate_2_4()
 {
-	//scramble "bottom left"
-	//from "side 1" view
-	//rotate clockwise random amount of times
-
 	Megaminx manip_megaminx; //create a megaminx to apply manipulations to
 	manip_megaminx = *this;	//copy this megaminx into it	
 
@@ -547,6 +543,8 @@ Megaminx Megaminx::rotate_2_4()
 	return manip_megaminx;
 }
 
+//helper function for scramble
+//works as if turning face 1 side 2 clockwise
 void Megaminx::scramble_2_1(int random)
 {
 	int turns = 0;
@@ -572,12 +570,10 @@ void Megaminx::scramble_2_1(int random)
 	}
 }
 
+//helper function for solving
+//works as if turning face 1 side 2 counterclockwise
 Megaminx Megaminx::rotate_2_1()
 {
-	//scramble "bottom left"
-	//from "side 1" view
-	//rotate clockwise random amount of times
-
 	Megaminx manip_megaminx; //create a megaminx to apply manipulations to
 	manip_megaminx = *this;	//copy this megaminx into it	
 
@@ -601,6 +597,8 @@ Megaminx Megaminx::rotate_2_1()
 
 }
 
+//helper function for scramble
+//works as if turning face 3 side 2 clockwise
 void Megaminx::scramble_2_3(int random)
 {
 	int turns = 0;
@@ -625,13 +623,10 @@ void Megaminx::scramble_2_3(int random)
 		turns++;
 	}
 }
-
+//helper function for solving
+//works as if turning face 3 side 2 counterclockwise
 Megaminx Megaminx::rotate_2_3()
 {
-	//scramble "bottom left"
-	//from "side 1" view
-	//rotate clockwise random amount of times
-
 	Megaminx manip_megaminx; //create a megaminx to apply manipulations to
 	manip_megaminx = *this;	//copy this megaminx into it	
 
@@ -654,7 +649,8 @@ Megaminx Megaminx::rotate_2_3()
 	return manip_megaminx;
 
 }
-
+//helper function for scramble
+//works as if turning face 5 side 2 clockwise
 void Megaminx::scramble_2_5(int random)
 {
 	int turns = 0;
@@ -680,12 +676,10 @@ void Megaminx::scramble_2_5(int random)
 	}
 }
 
+//helper function for scramble
+//works as if turning face 5 side 2 counterclockwise
 Megaminx Megaminx::rotate_2_5()
 {
-	//scramble "bottom left"
-	//from "side 1" view
-	//rotate clockwise random amount of times
-
 	Megaminx manip_megaminx; //create a megaminx to apply manipulations to
 	manip_megaminx = *this;	//copy this megaminx into it	
 
@@ -709,11 +703,10 @@ Megaminx Megaminx::rotate_2_5()
 
 }
 
+//helper function for scramble
+//works as if turning face 1 side 1 clockwise 
 void Megaminx::scramble_left_side(int random)
 {
-	//scramble "left" rotating side of megaminx
-	//from "side 1" view
-	//rotate clockwise "random" amount of times
 	int turns = 0;
 	while (turns < random) 
 	{
@@ -734,12 +727,10 @@ void Megaminx::scramble_left_side(int random)
 
 }
 
+//helper function for solving
+//works as if turning face 1 side 1 counterclockwise
 Megaminx Megaminx::rotate_left_side()
 {
-	//scramble "bottom left"
-	//from "side 1" view
-	//rotate clockwise random amount of times
-
 	Megaminx manip_megaminx; //create a megaminx to apply manipulations to
 	manip_megaminx = *this;	//copy this megaminx into it	
 
@@ -763,11 +754,10 @@ Megaminx Megaminx::rotate_left_side()
 
 }
 
+//helper function for scramble
+// works as if turning face 3 side 1 clockwise
 void Megaminx::scramble_right_side(int random)
 {
-	//scramble "right" rotating side of megaminx
-	//from "side 1" view
-	//rotate clockwise "random" amount of times
 	int turns = 0;
 	while (turns < random)
 	{
@@ -791,12 +781,11 @@ void Megaminx::scramble_right_side(int random)
 	}
 
 }
+
+//helper function for solving
+//works as if turning face 3 side 1 counterclockwise
 Megaminx Megaminx::rotate_right_side()
 {
-	//scramble "bottom left"
-	//from "side 1" view
-	//rotate clockwise random amount of times
-
 	Megaminx manip_megaminx; //create a megaminx to apply manipulations to
 	manip_megaminx = *this;	//copy this megaminx into it	
 
@@ -820,6 +809,8 @@ Megaminx Megaminx::rotate_right_side()
 
 }
 
+//helper function for scramble
+//works as if turning face 2 side 1 clockwise
 void Megaminx::scramble_1_2(int random)
 {
 	//scramble "bottom left" rotating side of megaminx
@@ -845,12 +836,11 @@ void Megaminx::scramble_1_2(int random)
 		turns++;
 	}
 }
+
+//helper function for solving
+//works as if turning face 2 side 1 counterclockwise
 Megaminx Megaminx::rotate_1_2()
 {
-	//scramble "bottom left"
-	//from "side 1" view
-	//rotate clockwise random amount of times
-
 	Megaminx manip_megaminx; //create a megaminx to apply manipulations to
 	manip_megaminx = *this;	//copy this megaminx into it	
 
@@ -874,14 +864,14 @@ Megaminx Megaminx::rotate_1_2()
 
 }
 
+//main function for "scrambling" Megaminx
+//takes as number of desired moves as input from user
 void Megaminx::scramble()
 {
 	int moves = 0;
 //	std::cout << "Enter number of desired moves: ";
 	std::cin >> moves;
 	
-	//std::cout << "The tops from view of side 1 face 3 view will be scrambled " << rand3 << " times." << std::endl;
-
 	std::random_device rand_dev;
 	std::uniform_int_distribution<int> range(0,1);
 	for(int i = 0; i < moves; i++)
@@ -946,6 +936,10 @@ void Megaminx::scramble()
 	
 
 }
+
+//calculate the number of stickers out of place on the Megaminx
+//i.e., number of stickers that aren't on the face with the
+//center the same color
 int Megaminx::calculate_stickers()
 {		
 	int misplaced_stickers = 0;
@@ -978,7 +972,7 @@ int Megaminx::calculate_stickers()
 	
 	}
 
-	for(int i =0; i < SIDE_2_SIZE; i++)//for each face in side 1
+	for(int i =0; i < SIDE_2_SIZE; i++)//for each face in side 2
 	{
 		Face current_face = (this->faces_array2[i]);
 		Block center_sticker((current_face.center).row[1]); //the main center sticker of the face
@@ -1007,22 +1001,20 @@ int Megaminx::calculate_stickers()
 	}	
 	return misplaced_stickers;
 }
+
+//my heuristic
 void Megaminx::distance_to_solved(int depth)
 {
 	int misplaced_sticks = this->calculate_stickers();
-	this->g = depth;
+	this->g = depth; //pass in depth as parameter
 		
 	//assign h to be the ceiling of the number of misplaced stickers divided by 15
 	this->h = (misplaced_sticks / 15) + (misplaced_sticks % 15 != 0);
 	this->f = h + g;
 }
 
-/*----------------------------------------
-|               rotate_top()    
-|-----------------------------------------
-| Description: return copy of this Megaminx 
-| top rotated counterclockwise by one
-------------------------------------------*/
+//helper function for solving
+//rotates face 0 side 1 counterclockwise
 Megaminx Megaminx::rotate_top()
 {
 	Megaminx manip_megaminx; //create a megaminx to apply manipulations to
@@ -1039,12 +1031,8 @@ Megaminx Megaminx::rotate_top()
 
 }
 
-/*----------------------------------------
-|               rotate_bot()    
-|-----------------------------------------
-| Description: return copy of this Megaminx 
-| bottom rotated counterclockwise by one
-------------------------------------------*/
+//helper function for solving
+//rotates face 0 side 2 counterclockwise
 Megaminx Megaminx::rotate_bot()
 {
 	Megaminx manip_megaminx; //create a megaminx to apply manipulations to
