@@ -28,7 +28,7 @@ AStar::AStar(Megaminx puzzle)
 	bot_rotation = unsolved_puzzle.rotate_bot();
 	bot_rotation.distance_to_solved(1);
 	megaminx_queue.push(bot_rotation);
-	//make child for "left" side scramble
+/*	//make child for "left" side scramble
 	Megaminx left_rotation;
 	left_rotation = unsolved_puzzle.rotate_left_side();
 	left_rotation.distance_to_solved(1);
@@ -86,7 +86,7 @@ AStar::AStar(Megaminx puzzle)
 	t_5_rotation = unsolved_puzzle.rotate_2_5();
 	t_5_rotation.distance_to_solved(1);
 	megaminx_queue.push(t_5_rotation);		
-
+*/
 	}
 }
 
@@ -106,7 +106,7 @@ void AStar::expand_megaminx_node(Megaminx puzzle, int deep)
 	bot_rotation.distance_to_solved(deep);
 	megaminx_queue.push(bot_rotation);
 	//make child for "left" side scramble
-	Megaminx left_rotation;
+/*	Megaminx left_rotation;
 	left_rotation = unsolved_puzzle.rotate_left_side();
 	left_rotation.distance_to_solved(deep);
 	megaminx_queue.push(left_rotation);
@@ -163,7 +163,7 @@ void AStar::expand_megaminx_node(Megaminx puzzle, int deep)
 	t_5_rotation = unsolved_puzzle.rotate_2_5();
 	t_5_rotation.distance_to_solved(deep);
 	megaminx_queue.push(t_5_rotation);		
-
+*/
 }
 //copy constructor - mostly unnecessary
 AStar::AStar(const AStar &copy)
