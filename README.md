@@ -37,3 +37,4 @@ g++ -std=c++11 -o AStar AStar.cpp Block.cpp Row.cpp Face.cpp Megaminx.cpp main.c
 * Used information from these sites to implement random number generator: https://en.cppreference.com/w/cpp/numeric/random/random_device and https://en.cppreference.com/w/cpp/numeric/random/uniform_int_distribution 
 * Also saw Harrison Incencio's GUI implementation on the discussion board, and drew inspiration for formatting my GUI output from it.
 * Michael Murray gave me my idea for how I've changed my randomization since my last project; he inspired the algorithm I chose, in that I assign each face a number, generate a random number and then choose the cooresponding face to rotate.
+* My heuristic was Tyler Price's idea in lecture
