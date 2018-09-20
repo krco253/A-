@@ -16,6 +16,11 @@
 AStar::AStar(Megaminx puzzle) 
 {
 	this->unsolved_puzzle = puzzle;
+	this->nodes_expanded = 1;
+	if(puzzle.is_solved())
+	{megaminx_queue.push(puzzle); }
+	else
+	{
 	//make child for moving top counterclockwise
 	Megaminx top_rotation; 
 	top_rotation = unsolved_puzzle.rotate_top();
@@ -85,13 +90,12 @@ AStar::AStar(Megaminx puzzle)
 	t_5_rotation.distance_to_solved(1);
 	megaminx_queue.push(t_5_rotation);		
 
-
-
-
+	}
 }
 
 void AStar::expand_megaminx_node(Megaminx puzzle, int deep)
 {
+	nodes_expanded++;
 	//make child for moving top counterclockwise
 	Megaminx top_rotation; 
 	top_rotation = puzzle.rotate_top();
@@ -181,18 +185,17 @@ Megaminx AStar::solve(int &depth)
 {
 	Megaminx blank;
 	Megaminx top_mega = this->megaminx_queue.top();
-	if (top_mega.is_solved())
+	if (top_mega.calculate_stickers() == 0)
 		return (top_mega);
-	while(!(top_mega == blank))
+	while(top_mega.calculate_stickers() != 0)
 	{
+//		top_mega.print();
 		megaminx_queue.pop();
 		depth = top_mega.g;
 		depth++;
 		this->expand_megaminx_node(top_mega, depth);
 		top_mega = this->megaminx_queue.top();
-		if (top_mega==blank)
-			return(top_mega);
 	}
-	
+	return top_mega;
 	
 }

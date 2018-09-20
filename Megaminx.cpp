@@ -877,13 +877,13 @@ Megaminx Megaminx::rotate_1_2()
 void Megaminx::scramble()
 {
 	int moves = 0;
-	std::cout << "Enter number of desired moves: ";
+//	std::cout << "Enter number of desired moves: ";
 	std::cin >> moves;
 	
 	//std::cout << "The tops from view of side 1 face 3 view will be scrambled " << rand3 << " times." << std::endl;
 
 	std::random_device rand_dev;
-	std::uniform_int_distribution<int> range(1,12);
+	std::uniform_int_distribution<int> range(0,1);
 	for(int i = 0; i < moves; i++)
 	{
 		int which_move = range(rand_dev);
@@ -940,20 +940,18 @@ void Megaminx::scramble()
 			break;
 		}
 
+		}
 	}
 
-}	
+	
 
 }
-
-void Megaminx::distance_to_solved(int depth)
-{
+int Megaminx::calculate_stickers()
+{		
 	int misplaced_stickers = 0;
-	this->g = depth;
-		
 	for(int i =0; i < SIDE_1_SIZE; i++)//for each face in side 1
 	{
-		Face current_face = (faces_array1[i]);
+		Face current_face = (this->faces_array1[i]);
 		Block center_sticker((current_face.center).row[1]); //the main center sticker of the face
 
 		for(int j =0; j < ROW_SIZE; j++) //for top row of face
@@ -962,33 +960,60 @@ void Megaminx::distance_to_solved(int depth)
 				misplaced_stickers++;
 		}
 
-		for(int j =0; j < ROW_SIZE; j++) //for top right row of face
-		{
-			if((current_face.top_right).row[j] != center_sticker)
-				misplaced_stickers++;
-		}
+		if ((current_face.center).row[0] != center_sticker)
+			misplaced_stickers++;
+		if((current_face.center).row[2] != center_sticker)
+			misplaced_stickers++;
 	
-		for(int j =0; j < ROW_SIZE; j++) //for bottom right row of face
-		{
-			if((current_face.bot_right).row[j] != center_sticker)
-				misplaced_stickers++;
-		}
-
 		for(int j =0; j < ROW_SIZE; j++) //for bottom left row of face
 		{
 			if((current_face.bot_left).row[j] != center_sticker)
 				misplaced_stickers++;
-		}	 
-		
-		for(int j =0; j < ROW_SIZE; j++) //for top left row of face
-		{
-			if((current_face.top_left).row[j] != center_sticker)
-				misplaced_stickers++;
-		}     
-	}
+		}
+		 
+		if ((current_face.bot_right).row[0] != center_sticker)
+			misplaced_stickers++;
+		if((current_face.bot_right).row[2] != center_sticker)
+			misplaced_stickers++;		
 	
+	}
+
+	for(int i =0; i < SIDE_2_SIZE; i++)//for each face in side 1
+	{
+		Face current_face = (this->faces_array2[i]);
+		Block center_sticker((current_face.center).row[1]); //the main center sticker of the face
+
+		for(int j =0; j < ROW_SIZE; j++) //for top row of face
+		{
+			if((current_face.top).row[j] != center_sticker)
+				misplaced_stickers++;
+		}
+
+		if ((current_face.center).row[0] != center_sticker)
+			misplaced_stickers++;
+		if((current_face.center).row[2] != center_sticker)
+			misplaced_stickers++;
+	
+		for(int j =0; j < ROW_SIZE; j++) //for bottom left row of face
+		{
+			if((current_face.bot_left).row[j] != center_sticker)
+				misplaced_stickers++;
+		}
+		 
+		if ((current_face.bot_right).row[0] != center_sticker)
+			misplaced_stickers++;
+		if((current_face.bot_right).row[2] != center_sticker)
+			misplaced_stickers++;		
+	}	
+	return misplaced_stickers;
+}
+void Megaminx::distance_to_solved(int depth)
+{
+	int misplaced_sticks = this->calculate_stickers();
+	this->g = depth;
+		
 	//assign h to be the ceiling of the number of misplaced stickers divided by 15
-	this->h = (misplaced_stickers / 15) + (misplaced_stickers % 15 != 0);
+	this->h = (misplaced_sticks / 15) + (misplaced_sticks % 15 != 0);
 	this->f = h + g;
 }
 
@@ -1065,6 +1090,12 @@ bool Megaminx::operator==(const Megaminx &other) const
 		}
 
 		return true;
+}
+bool Megaminx::operator!=(const Megaminx &other) const
+{
+	if(*this == other)
+		return false;
+	else return true;
 }
 
 bool Megaminx::is_solved()

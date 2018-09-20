@@ -18,6 +18,7 @@ class Megaminx
 		void scramble_top(int random);
 		void scramble_bottom(int random);
 		void scramble_left_side(int random);
+		int calculate_stickers();
 		Megaminx rotate_left_side();
 		void scramble_right_side(int random);
 		Megaminx rotate_right_side();
@@ -41,6 +42,7 @@ class Megaminx
 		Megaminx rotate_1_2();
 		void print();
 		bool operator==(const Megaminx &other) const;
+		bool operator!=(const Megaminx &other) const;
 		void distance_to_solved(int depth);
 		bool is_solved();
 		bool operator<(const Megaminx &other) const;

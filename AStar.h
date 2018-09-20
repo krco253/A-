@@ -16,7 +16,7 @@ class AStar
 		bool is_solved(); //returns true if the Megaminx is solved
 		Megaminx solve(int &depth); 
 		void expand_megaminx_node(Megaminx puzzle, int deep);		
-
+		int nodes_expanded;
 	private:
 		Megaminx unsolved_puzzle;
 		std::priority_queue<Megaminx> megaminx_queue;	
