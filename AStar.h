@@ -18,6 +18,6 @@ class AStar
 		void expand_megaminx_node(Megaminx puzzle, int deep);		
 		int nodes_expanded;
 	private:
-		Megaminx unsolved_puzzle;
+		Megaminx unsolved_puzzle; //original puzzle to be solved
 		std::priority_queue<Megaminx> megaminx_queue;	
 };
